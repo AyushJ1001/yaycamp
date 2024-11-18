@@ -1,13 +1,15 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
   pgTableCreator,
   timestamp,
   varchar,
+  text,
+  decimal,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -22,15 +24,67 @@ export const posts = createTable(
   "post",
   {
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-    name: varchar("name", { length: 256 }),
+    userId: varchar("user_id", { length: 256 }).notNull(),
+    title: varchar("title", { length: 256 }).notNull(),
+    description: text("description").notNull(),
+    latitude: decimal("latitude", { precision: 10, scale: 7 }).notNull(),
+    longitude: decimal("longitude", { precision: 10, scale: 7 }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
+      () => new Date(),
     ),
   },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  })
+  (post) => ({
+    titleIndex: index("post_title_idx").on(post.title),
+    userIdIndex: index("post_user_id_idx").on(post.userId),
+    coordinatesIndex: index("coordinates_idx").on(
+      post.latitude,
+      post.longitude,
+    ),
+  }),
 );
+
+export const comments = createTable(
+  "comment",
+  {
+    id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+    content: text("content").notNull(),
+    userId: varchar("user_id", { length: 256 }).notNull(),
+    postId: integer("post_id")
+      .notNull()
+      .references(() => posts.id, { onDelete: "cascade" }),
+    parentId: integer("parent_id"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (comment) => ({
+    userIdIndex: index("comment_user_id_idx").on(comment.userId),
+    postIdIndex: index("comment_post_id_idx").on(comment.postId),
+    parentIdIndex: index("comment_parent_id_idx").on(comment.parentId),
+  }),
+);
+
+export const postsRelations = relations(posts, ({ many }) => ({
+  comments: many(comments),
+}));
+
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  post: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
+  parent: one(comments, {
+    fields: [comments.parentId],
+    references: [comments.id],
+    relationName: "parentChild",
+  }),
+  children: many(comments, {
+    relationName: "parentChild",
+  }),
+}));

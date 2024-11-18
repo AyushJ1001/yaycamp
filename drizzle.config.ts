@@ -8,5 +8,7 @@ export default {
   dbCredentials: {
     url: env.POSTGRES_URL,
   },
+  verbose: true,
+  strict: true,
   tablesFilter: ["yaycamp_*"],
 } satisfies Config;
