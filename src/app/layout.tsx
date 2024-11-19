@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 import Navbar from "~/components/navbar";
 import { ThemeProvider } from "~/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
+import Footer from "~/components/footer";
 
 export const metadata: Metadata = {
   title: "Yay Camp",
@@ -37,6 +38,7 @@ export default function RootLayout({
           >
             <Navbar />
             {children}
+            <Footer />
           </ThemeProvider>
         </body>
       </html>
