@@ -6,6 +6,7 @@ import Navbar from "~/components/navbar";
 import { ThemeProvider } from "~/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "~/components/footer";
+import { IsClientCtxProvider } from "~/utils/is-client-ctx";
 
 export const metadata: Metadata = {
   title: "Yay Camp",
@@ -30,16 +31,18 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <body>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Navbar />
-            {children}
-            <Footer />
-          </ThemeProvider>
+          <IsClientCtxProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Navbar />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </IsClientCtxProvider>
         </body>
       </html>
     </ClerkProvider>
