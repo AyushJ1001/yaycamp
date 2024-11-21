@@ -36,6 +36,7 @@ export const posts = createTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
       () => new Date(),
     ),
+    date: date("date").notNull(),
   },
   (post) => ({
     titleIndex: index("post_title_idx").on(post.title),
@@ -63,7 +64,6 @@ export const comments = createTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
       () => new Date(),
     ),
-    date: date("date").notNull(),
   },
   (comment) => ({
     userIdIndex: index("comment_user_id_idx").on(comment.userId),
