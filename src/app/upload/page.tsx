@@ -25,6 +25,8 @@ import { Button } from "~/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import dynamic from "next/dynamic";
+import { uploadPost } from "./upload";
+import { useRouter } from "next/navigation";
 const Map = dynamic(() => import("./map"), { ssr: false });
 const formSchema = z.object({
   title: z.string().min(1),
@@ -36,7 +38,10 @@ const formSchema = z.object({
   }),
 });
 
+export type FormSchema = z.infer<typeof formSchema>;
+
 export default function Page() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,8 +51,10 @@ export default function Page() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    await uploadPost(values);
+    router.push("/camps");
   }
 
   return (
