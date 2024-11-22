@@ -22,7 +22,6 @@ model Post {
   @@index([latitude, longitude])
   @@index([title])
   @@index([userId])
-  @@map("yaycamp_post")
 }
 
 model Comment {
@@ -38,5 +37,4 @@ model Comment {
   @@index([parentId])
   @@index([postId])
   @@index([userId])
-  @@map("yaycamp_comment")
 }
