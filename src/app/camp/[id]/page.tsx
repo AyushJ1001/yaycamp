@@ -1,6 +1,5 @@
 import { db } from "~/server/db";
-import { posts } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+
 import {
   Card,
   CardHeader,
@@ -18,8 +17,10 @@ export const generateMetadata = async ({
 }) => {
   const id = (await params).id;
 
-  const post = await db.query.posts.findFirst({
-    where: eq(posts.id, Number(id)),
+  const post = await db.post.findFirst({
+    where: {
+      id: Number(id),
+    },
   });
 
   return { title: post?.title };
@@ -32,8 +33,10 @@ export default async function Page({
 }) {
   const id = (await params).id;
 
-  const post = await db.query.posts.findFirst({
-    where: eq(posts.id, Number(id)),
+  const post = await db.post.findFirst({
+    where: {
+      id: Number(id),
+    },
   });
 
   return (
@@ -44,12 +47,14 @@ export default async function Page({
       </CardHeader>
       <CardContent className="p-4">
         <ShowMap
-          latitude={post?.latitude ?? ""}
-          longitude={post?.longitude ?? ""}
+          latitude={post?.latitude.toString() ?? ""}
+          longitude={post?.longitude.toString() ?? ""}
         />
       </CardContent>
       <CardFooter className="p-4">
-        <p className="text-sm text-muted-foreground">{post?.date}</p>
+        <p className="text-sm text-muted-foreground">
+          {post?.date.toLocaleDateString()}
+        </p>
       </CardFooter>
     </Card>
   );

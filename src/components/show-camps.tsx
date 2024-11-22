@@ -1,17 +1,6 @@
+import { type Post } from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import Link from "next/link";
-
-type Post = {
-  date: string;
-  id: number;
-  userId: string;
-  title: string;
-  description: string;
-  latitude: string;
-  longitude: string;
-  createdAt: Date;
-  updatedAt: Date | null;
-};
 
 export default function ShowCamps({ posts }: { posts: Post[] }) {
   if (posts.length === 0)
