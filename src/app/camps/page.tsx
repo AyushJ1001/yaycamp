@@ -1,6 +1,7 @@
 import { db } from "~/server/db";
 import { type Metadata } from "next";
 import ShowCamps from "~/components/show-camps";
+import { posts as dbPosts } from "~/server/db/schema";
 
 export const metadata: Metadata = {
   title: "Camps",
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const posts = await db.query.posts.findMany();
+  const posts = await db.select().from(dbPosts);
 
   return <ShowCamps posts={posts} />;
 }
