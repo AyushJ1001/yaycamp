@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${GeistSans.variable}`}
         suppressHydrationWarning
       >
-        <body>
+        <body className="h-full w-full overflow-y-scroll">
           <IsClientCtxProvider>
             <ThemeProvider
               attribute="class"

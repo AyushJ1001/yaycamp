@@ -31,7 +31,7 @@ const Map = dynamic(() => import("./map"), { ssr: false });
 const formSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
-  date: z.date(),
+  date: z.date().min(new Date()),
   coordinates: z.object({
     latitude: z.number(),
     longitude: z.number(),
