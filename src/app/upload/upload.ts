@@ -2,14 +2,12 @@
 
 import { db } from "~/server/db";
 import { type FormSchema } from "./page";
-import { auth } from "@clerk/nextjs/server";
+import { getServerAuth } from "~/server/auth";
 import { redirect } from "next/navigation";
 import { Decimal } from "@prisma/client/runtime/library";
 
 export async function uploadPost(formInput: FormSchema) {
-  const user = await auth();
-
-  const userId = user.userId;
+  const { userId } = await getServerAuth();
   if (!userId) {
     redirect("/sign-in");
   }

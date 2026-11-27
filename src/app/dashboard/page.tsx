@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { type Metadata } from "next";
 import { redirect } from "next/navigation";
 import ShowCamps from "~/components/show-camps";
+import { getServerAuth } from "~/server/auth";
 import { db } from "~/server/db";
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const { userId } = await auth();
+  const { userId } = await getServerAuth();
 
   if (!userId) {
     redirect("/sign-in");
