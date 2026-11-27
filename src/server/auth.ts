@@ -1,21 +1,14 @@
-import { clerkClient } from "@clerk/nextjs/server";
-import { headers } from "next/headers";
+import { auth } from "@clerk/nextjs/server";
 
+/**
+ * Returns the signed-in user's id, or null when the visitor is signed out.
+ *
+ * Clerk's middleware (src/middleware.ts, Node.js runtime) handles the
+ * session-refresh handshake before the request reaches a page, so a signed-in
+ * user whose short-lived session token expired is refreshed instead of being
+ * treated as signed out.
+ */
 export async function getServerAuth(): Promise<{ userId: string | null }> {
-  const headerList = await headers();
-  const host =
-    headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost";
-  const proto = headerList.get("x-forwarded-proto") ?? "https";
-  const request = new Request(`${proto}://${host}`, {
-    headers: new Headers(headerList),
-  });
-
-  const client = await clerkClient();
-  const requestState = await client.authenticateRequest(request);
-
-  if (!requestState.isSignedIn) {
-    return { userId: null };
-  }
-
-  return { userId: requestState.toAuth().userId };
+  const { userId } = await auth();
+  return { userId };
 }
